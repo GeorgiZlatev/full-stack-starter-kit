@@ -7,6 +7,7 @@ import RegisterForm from '@/components/RegisterForm';
 import Dashboard from '@/components/Dashboard';
 import AiToolsList from '@/components/AiToolsList';
 import AddAiToolForm from '@/components/AddAiToolForm';
+import Profile from '@/components/Profile';
 import ClientOnly from '@/components/ClientOnly';
 
 export default function Home() {
@@ -24,8 +25,6 @@ export default function Home() {
 function HomeContent() {
   const { user, loading } = useAuth();
   const [showRegister, setShowRegister] = useState(false);
-  const [showAiTools, setShowAiTools] = useState(false);
-  const [showAddTool, setShowAddTool] = useState(false);
 
   if (loading) {
     return (
@@ -36,108 +35,7 @@ function HomeContent() {
   }
 
   if (user) {
-    if (showAddTool) {
-      return (
-        <div className="min-h-screen bg-gray-50">
-          <nav className="bg-white shadow">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between h-16">
-                <div className="flex items-center">
-                  <button
-                    onClick={() => setShowAddTool(false)}
-                    className="text-gray-600 hover:text-gray-900 mr-4"
-                  >
-                    ← Back to Tools
-                  </button>
-                  <h1 className="text-xl font-semibold">Add New AI Tool</h1>
-                </div>
-              </div>
-            </div>
-          </nav>
-          <AddAiToolForm onSuccess={() => setShowAddTool(false)} />
-        </div>
-      );
-    }
-
-    if (showAiTools) {
-      return (
-        <div className="min-h-screen bg-gray-50">
-          <nav className="bg-white shadow">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between h-16">
-                <div className="flex items-center">
-                  <button
-                    onClick={() => setShowAiTools(false)}
-                    className="text-gray-600 hover:text-gray-900 mr-4"
-                  >
-                    ← Back to Dashboard
-                  </button>
-                  <h1 className="text-xl font-semibold">AI Tools</h1>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-700">Welcome, {user.name}</span>
-                  <button
-                    onClick={() => setShowAddTool(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
-                  >
-                    Add Tool
-                  </button>
-                </div>
-              </div>
-            </div>
-          </nav>
-          <AiToolsList onAddTool={() => setShowAddTool(true)} />
-        </div>
-      );
-    }
-
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <nav className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
-              <div className="flex items-center">
-                <h1 className="text-xl font-semibold">Dashboard</h1>
-              </div>
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => setShowAiTools(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
-                >
-                  AI Tools
-                </button>
-                <span className="text-sm text-gray-700">Welcome, {user.name}</span>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </nav>
-
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="bg-white overflow-hidden shadow sm:rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Welcome to AI Tools Manager</h3>
-              <div className="mt-2 max-w-xl text-sm text-gray-500">
-                <p>Discover, share, and manage AI tools for your projects.</p>
-              </div>
-              <div className="mt-4">
-                <button
-                  onClick={() => setShowAiTools(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  Browse AI Tools
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <Dashboard />;
   }
 
   return (
