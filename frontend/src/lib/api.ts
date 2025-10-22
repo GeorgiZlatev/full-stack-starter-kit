@@ -24,6 +24,67 @@ export interface RegisterData {
   role: 'owner' | 'backend' | 'frontend' | 'pm' | 'qa' | 'designer';
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  color: string;
+  icon?: string;
+  is_active: boolean;
+  ai_tools_count?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+  color: string;
+  is_active: boolean;
+  ai_tools_count?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AiTool {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  how_to_use?: string;
+  real_examples?: string;
+  link: string;
+  documentation_link?: string;
+  screenshots?: string[];
+  additional_requirements?: Record<string, any>;
+  category_id: number;
+  created_by: number;
+  is_active: boolean;
+  is_featured: boolean;
+  views_count: number;
+  category?: Category;
+  tags?: Tag[];
+  creator?: User;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateAiToolData {
+  name: string;
+  description: string;
+  link: string;
+  category_id: number;
+  recommended_roles?: string[];
+  tag_ids?: number[];
+  how_to_use?: string;
+  real_examples?: string;
+  documentation_link?: string;
+  screenshots?: string[];
+  additional_requirements?: Record<string, any>;
+}
+
 class ApiClient {
   private baseURL: string;
   private token: string | null = null;
@@ -117,6 +178,75 @@ class ApiClient {
   async deleteUser(id: number): Promise<{ message: string }> {
     return this.request<{ message: string }>(`/users/${id}`, {
       method: 'DELETE',
+    });
+  }
+
+  // AI Tools API
+  async getAiTools(params?: {
+    category_id?: number;
+    role?: string;
+    tag_id?: number;
+    search?: string;
+    featured?: boolean;
+    page?: number;
+  }): Promise<{ data: AiTool[]; current_page: number; last_page: number; total: number }> {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = searchParams.toString();
+    return this.request<{ data: AiTool[]; current_page: number; last_page: number; total: number }>(`/ai-tools${query ? `?${query}` : ''}`);
+  }
+
+  async getAiTool(id: number): Promise<AiTool> {
+    return this.request<AiTool>(`/ai-tools/${id}`);
+  }
+
+  async createAiTool(data: CreateAiToolData): Promise<{ message: string; tool: AiTool }> {
+    return this.request<{ message: string; tool: AiTool }>('/ai-tools', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateAiTool(id: number, data: Partial<CreateAiToolData>): Promise<{ message: string; tool: AiTool }> {
+    return this.request<{ message: string; tool: AiTool }>(`/ai-tools/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteAiTool(id: number): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/ai-tools/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Categories API
+  async getCategories(): Promise<Category[]> {
+    return this.request<Category[]>('/categories');
+  }
+
+  async createCategory(data: { name: string; description?: string; color?: string; icon?: string }): Promise<{ message: string; category: Category }> {
+    return this.request<{ message: string; category: Category }>('/categories', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Tags API
+  async getTags(): Promise<Tag[]> {
+    return this.request<Tag[]>('/tags');
+  }
+
+  async createTag(data: { name: string; color?: string }): Promise<{ message: string; tag: Tag }> {
+    return this.request<{ message: string; tag: Tag }>('/tags', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   }
 }
