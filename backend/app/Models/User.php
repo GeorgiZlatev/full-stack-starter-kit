@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -46,6 +47,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the user's 2FA methods
+     */
+    public function twoFactorAuths(): HasMany
+    {
+        return $this->hasMany(TwoFactorAuth::class);
+    }
+
+    /**
+     * Get the user's 2FA codes
+     */
+    public function twoFactorCodes(): HasMany
+    {
+        return $this->hasMany(TwoFactorCode::class);
     }
 
     /**

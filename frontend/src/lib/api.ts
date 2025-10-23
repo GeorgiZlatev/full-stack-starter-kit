@@ -85,6 +85,11 @@ export interface CreateAiToolData {
   additional_requirements?: Record<string, any>;
 }
 
+export interface TwoFactorStatus {
+  enabled_methods: string[];
+  has_any_enabled: boolean;
+}
+
 class ApiClient {
   private baseURL: string;
   private token: string | null = null;
@@ -134,11 +139,22 @@ class ApiClient {
     return response.json();
   }
 
-  async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await this.request<LoginResponse>('/login', {
+  async login(email: string, password: string, twoFactorCode?: string, twoFactorType?: string): Promise<LoginResponse | { requires_2fa: boolean; available_methods: string[] }> {
+    const body: any = { email, password };
+    if (twoFactorCode) {
+      body.two_factor_code = twoFactorCode;
+      body.two_factor_type = twoFactorType || 'google_authenticator';
+    }
+
+    const response = await this.request<LoginResponse | { requires_2fa: boolean; available_methods: string[] }>('/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(body),
     });
+
+    if ('requires_2fa' in response) {
+      return response;
+    }
+
     this.setToken(response.token);
     return response;
   }
@@ -248,6 +264,51 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(data),
     });
+  }
+
+  // 2FA methods
+  async getTwoFactorStatus(): Promise<TwoFactorStatus> {
+    const response = await this.request<TwoFactorStatus>('/2fa/status');
+    return response;
+  }
+
+  async enableTwoFactor(type: string, data: any = {}): Promise<any> {
+    const response = await this.request('/2fa/enable', {
+      method: 'POST',
+      body: JSON.stringify({ type, ...data }),
+    });
+    return response;
+  }
+
+  async disableTwoFactor(type: string): Promise<any> {
+    const response = await this.request('/2fa/disable', {
+      method: 'POST',
+      body: JSON.stringify({ type }),
+    });
+    return response;
+  }
+
+  async sendTwoFactorCode(type: string, data: any = {}): Promise<any> {
+    const response = await this.request('/2fa/send-code', {
+      method: 'POST',
+      body: JSON.stringify({ type, ...data }),
+    });
+    return response;
+  }
+
+  async verifyTwoFactorCode(code: string, type: string): Promise<any> {
+    const response = await this.request('/2fa/verify', {
+      method: 'POST',
+      body: JSON.stringify({ code, type }),
+    });
+    return response;
+  }
+
+  async generateBackupCodes(): Promise<any> {
+    const response = await this.request('/2fa/backup-codes', {
+      method: 'POST',
+    });
+    return response;
   }
 }
 

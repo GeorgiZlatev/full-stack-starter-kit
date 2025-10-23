@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AiToolController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\TwoFactorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,9 +50,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/categories/{category}', [CategoryController::class, 'update']);
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
     
-    // Tags management (authenticated users only)
-    Route::post('/tags', [TagController::class, 'store']);
-    Route::get('/tags/{tag}', [TagController::class, 'show']);
-    Route::put('/tags/{tag}', [TagController::class, 'update']);
-    Route::delete('/tags/{tag}', [TagController::class, 'destroy']);
-});
+        // Tags management (authenticated users only)
+        Route::post('/tags', [TagController::class, 'store']);
+        Route::get('/tags/{tag}', [TagController::class, 'show']);
+        Route::put('/tags/{tag}', [TagController::class, 'update']);
+        Route::delete('/tags/{tag}', [TagController::class, 'destroy']);
+        
+        // 2FA management (authenticated users only)
+        Route::prefix('2fa')->group(function () {
+            Route::get('/status', [TwoFactorController::class, 'status']);
+            Route::post('/enable', [TwoFactorController::class, 'enable']);
+            Route::post('/disable', [TwoFactorController::class, 'disable']);
+            Route::post('/send-code', [TwoFactorController::class, 'sendCode']);
+            Route::post('/verify', [TwoFactorController::class, 'verify']);
+            Route::post('/backup-codes', [TwoFactorController::class, 'generateBackupCodes']);
+        });
+    });

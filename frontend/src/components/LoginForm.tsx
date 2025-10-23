@@ -8,6 +8,9 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [requires2FA, setRequires2FA] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [twoFactorType, setTwoFactorType] = useState('google_authenticator');
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -16,7 +19,12 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      await login(email, password);
+      const result = await login(email, password, twoFactorCode || undefined, twoFactorType);
+      
+      if (result && 'requires_2fa' in result) {
+        setRequires2FA(true);
+        setError('');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -37,7 +45,7 @@ export default function LoginForm() {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
             required
           />
         </div>
@@ -50,10 +58,31 @@ export default function LoginForm() {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
             required
           />
         </div>
+        
+        {requires2FA && (
+          <div>
+            <label htmlFor="twoFactorCode" className="block text-sm font-medium text-gray-700">
+              2FA Code
+            </label>
+            <input
+              type="text"
+              id="twoFactorCode"
+              value={twoFactorCode}
+              onChange={(e) => setTwoFactorCode(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
+              placeholder="Enter 6-digit code from your authenticator app"
+              maxLength={6}
+            />
+            <p className="mt-1 text-sm text-gray-600">
+              Enter the 6-digit code from your Google Authenticator app
+            </p>
+          </div>
+        )}
+        
         {error && (
           <div className="text-red-600 text-sm">{error}</div>
         )}

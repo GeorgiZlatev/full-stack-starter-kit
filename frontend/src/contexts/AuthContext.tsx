@@ -57,10 +57,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, twoFactorCode?: string, twoFactorType?: string) => {
     try {
-      const response = await apiClient.login(email, password);
+      const response = await apiClient.login(email, password, twoFactorCode, twoFactorType);
+      
+      if (response.requires_2fa) {
+        // Return 2FA requirement instead of setting user
+        return { requires_2fa: true, available_methods: response.available_methods };
+      }
+      
+      // Set user and token directly, don't trigger initAuth
       setUser(response.user);
+      setLoading(false);
+      return { success: true };
     } catch (error) {
       throw error;
     }
@@ -84,8 +93,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     try {
       await apiClient.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
     } finally {
       setUser(null);
+      // Force clear any cached data
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auth_token');
+      }
     }
   };
 
