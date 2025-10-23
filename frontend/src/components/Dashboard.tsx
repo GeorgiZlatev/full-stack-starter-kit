@@ -197,6 +197,20 @@ export default function Dashboard() {
                   <p className="text-sm text-gray-600">Manage your account</p>
                 </div>
               </button>
+              
+              {/* Admin Panel Button - Only for owner and admin roles */}
+              {(user?.role === 'owner' || user?.role === 'admin') && (
+                <button
+                  onClick={() => window.location.href = '/admin'}
+                  className="flex items-center w-full p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors duration-200"
+                >
+                  <span className="text-2xl mr-3">🛡️</span>
+                  <div>
+                    <p className="font-medium text-gray-900">Admin Panel</p>
+                    <p className="text-sm text-gray-600">Manage tools and users</p>
+                  </div>
+                </button>
+              )}
             </div>
           </div>
 

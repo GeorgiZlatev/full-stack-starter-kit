@@ -126,7 +126,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                     required
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
                     placeholder="e.g., ChatGPT, GitHub Copilot"
                   />
                 </div>
@@ -139,7 +139,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                     required
                     value={formData.category_id}
                     onChange={(e) => handleInputChange('category_id', parseInt(e.target.value))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
                   >
                     <option value={0}>Select a category</option>
                     {categories.map(category => (
@@ -161,7 +161,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                 required
                 value={formData.link}
                 onChange={(e) => handleInputChange('link', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
                 placeholder="https://example.com"
               />
             </div>
@@ -175,7 +175,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                 rows={4}
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
                 placeholder="Describe what this tool does and how it can help..."
               />
             </div>
@@ -192,7 +192,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                     type="url"
                     value={formData.documentation_link || ''}
                     onChange={(e) => handleInputChange('documentation_link', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
                     placeholder="https://docs.example.com"
                   />
                 </div>
@@ -205,7 +205,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                     rows={3}
                     value={formData.how_to_use || ''}
                     onChange={(e) => handleInputChange('how_to_use', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
                     placeholder="Brief instructions on how to use this tool..."
                   />
                 </div>
@@ -219,7 +219,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                   rows={3}
                   value={formData.real_examples || ''}
                   onChange={(e) => handleInputChange('real_examples', e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
                   placeholder="Share specific examples of how you've used this tool..."
                 />
               </div>

@@ -8,6 +8,7 @@ use App\Http\Controllers\AiToolController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TwoFactorController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,5 +65,18 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/send-code', [TwoFactorController::class, 'sendCode']);
             Route::post('/verify', [TwoFactorController::class, 'verify']);
             Route::post('/backup-codes', [TwoFactorController::class, 'generateBackupCodes']);
+        });
+
+        // Admin routes (admin middleware required)
+        Route::middleware('admin')->prefix('admin')->group(function () {
+            Route::get('/dashboard', [AdminController::class, 'dashboard']);
+            Route::get('/tools', [AdminController::class, 'tools']);
+            Route::post('/tools/{aiTool}/approve', [AdminController::class, 'approveTool']);
+            Route::post('/tools/{aiTool}/reject', [AdminController::class, 'rejectTool']);
+            Route::get('/activity-logs', [AdminController::class, 'activityLogs']);
+            Route::get('/users', [AdminController::class, 'users']);
+            Route::get('/categories', [AdminController::class, 'categories']);
+            Route::get('/tags', [AdminController::class, 'tags']);
+            Route::post('/clear-cache', [AdminController::class, 'clearCache']);
         });
     });

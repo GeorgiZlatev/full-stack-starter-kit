@@ -310,6 +310,63 @@ class ApiClient {
     });
     return response;
   }
+
+  // Admin methods
+  async getAdminDashboard(): Promise<any> {
+    const response = await this.request('/admin/dashboard');
+    return response;
+  }
+
+  async getAdminTools(params?: any): Promise<any> {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : '';
+    const response = await this.request(`/admin/tools${queryString}`);
+    return response;
+  }
+
+  async approveTool(toolId: number, data?: any): Promise<any> {
+    const response = await this.request(`/admin/tools/${toolId}/approve`, {
+      method: 'POST',
+      body: JSON.stringify(data || {}),
+    });
+    return response;
+  }
+
+  async rejectTool(toolId: number, reason: string): Promise<any> {
+    const response = await this.request(`/admin/tools/${toolId}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
+    return response;
+  }
+
+  async getActivityLogs(params?: any): Promise<any> {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : '';
+    const response = await this.request(`/admin/activity-logs${queryString}`);
+    return response;
+  }
+
+  async getAdminUsers(params?: any): Promise<any> {
+    const queryString = params ? '?' + new URLSearchParams(params).toString() : '';
+    const response = await this.request(`/admin/users${queryString}`);
+    return response;
+  }
+
+  async getAdminCategories(): Promise<any> {
+    const response = await this.request('/admin/categories');
+    return response;
+  }
+
+  async getAdminTags(): Promise<any> {
+    const response = await this.request('/admin/tags');
+    return response;
+  }
+
+  async clearAdminCache(): Promise<any> {
+    const response = await this.request('/admin/clear-cache', {
+      method: 'POST',
+    });
+    return response;
+  }
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);

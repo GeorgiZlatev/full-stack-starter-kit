@@ -24,6 +24,10 @@ class AiTool extends Model
         'is_active',
         'is_featured',
         'views_count',
+        'status',
+        'rejection_reason',
+        'approved_at',
+        'approved_by',
     ];
 
     protected $casts = [
@@ -31,6 +35,7 @@ class AiTool extends Model
         'additional_requirements' => 'array',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'approved_at' => 'datetime',
     ];
 
     protected static function boot()
@@ -62,6 +67,11 @@ class AiTool extends Model
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'ai_tool_role', 'ai_tool_id', 'role');
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function getRecommendedRolesAttribute()

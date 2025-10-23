@@ -96,23 +96,34 @@ export default function SimpleLayout({ children, title, showBackButton, onBackCl
               
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => window.location.href = '/?page=tools'}
+                  onClick={() => window.location.href = '/tools'}
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   🤖 Tools
                 </button>
                 <button
-                  onClick={() => window.location.href = '/?page=add-tool'}
+                  onClick={() => window.location.href = '/add-tool'}
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   ➕ Add Tool
                 </button>
                 <button
-                  onClick={() => window.location.href = '/?page=profile'}
+                  onClick={() => window.location.href = '/profile'}
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   👤 Profile
                 </button>
+                
+                {/* Admin Panel Button - Only for owner and admin roles */}
+                {(user?.role === 'owner' || user?.role === 'admin') && (
+                  <button
+                    onClick={() => window.location.href = '/admin'}
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  >
+                    🛡️ Admin Panel
+                  </button>
+                )}
+                
                 <button
                   onClick={async () => {
                     await logout();
