@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use App\Models\ActivityLog;
 use App\Services\TwoFactorService;
 
 class AuthController extends Controller
@@ -40,6 +41,19 @@ class AuthController extends Controller
                         // 2FA verified, proceed with login
                         $token = $user->createToken('auth-token')->plainTextToken;
                         
+                        // Log login activity
+                        ActivityLog::log(
+                            $user->id,
+                            'login',
+                            'User',
+                            $user->id,
+                            null,
+                            null,
+                            'User logged in with 2FA',
+                            $request->ip(),
+                            $request->userAgent()
+                        );
+                        
                         return response()->json([
                             'user' => $user,
                             'token' => $token,
@@ -61,6 +75,19 @@ class AuthController extends Controller
             } else {
                 // No 2FA enabled, proceed with normal login
                 $token = $user->createToken('auth-token')->plainTextToken;
+                
+                // Log login activity
+                ActivityLog::log(
+                    $user->id,
+                    'login',
+                    'User',
+                    $user->id,
+                    null,
+                    null,
+                    'User logged in successfully',
+                    $request->ip(),
+                    $request->userAgent()
+                );
 
                 return response()->json([
                     'user' => $user,
@@ -92,6 +119,19 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;
+        
+        // Log registration activity
+        ActivityLog::log(
+            $user->id,
+            'register',
+            'User',
+            $user->id,
+            null,
+            null,
+            'New user registered',
+            $request->ip(),
+            $request->userAgent()
+        );
 
         return response()->json([
             'user' => $user,
@@ -102,7 +142,22 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $user = $request->user();
+        
+        // Log logout activity
+        ActivityLog::log(
+            $user->id,
+            'logout',
+            'User',
+            $user->id,
+            null,
+            null,
+            'User logged out',
+            $request->ip(),
+            $request->userAgent()
+        );
+        
+        $user->currentAccessToken()->delete();
 
         return response()->json([
             'message' => 'Logout successful'

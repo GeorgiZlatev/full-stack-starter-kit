@@ -1,185 +1,430 @@
-# vibecode-full-stack-starter-kit - Full-Stack Development Environment
+# 🚀 Full-Stack Starter Kit
 
-Generated on: Thu Sep  4 01:37:12 PM EEST 2025
-Location: /home/softart/scripts/vibecode-full-stack-starter-kit
+**Laravel Backend + Next.js Frontend с Role-Based Authentication и AI Tools Management**
 
-## 🚀 Tech Stack
+## 📋 Съдържание
 
-- **Frontend**: Next.js + React + TypeScript (Port 8200)
-- **Backend**: Laravel + PHP 8.2 + Nginx (Port 8201)  
-- **Database**: MySQL 8.0 (Port 8203)
-- **Cache**: Redis 7 (Port 8204)
-- **Development Tools**: Alpine container (Port 8205)
+- [Инсталация](#инсталация)
+- [Docker Setup](#docker-setup)
+- [Добавяне на AI Tools](#добавяне-на-ai-tools)
+- [Коментари и рейтинги](#коментари-и-рейтинги)
+- [Ролева система](#ролева-система)
+- [Админ панел](#админ-панел)
+- [API Документация](#api-документация)
+- [AI Агенти](#ai-агенти)
+- [Troubleshooting](#troubleshooting)
 
-## 📋 Quick Start
+## 🛠️ Инсталация
 
-1. **Start the environment:**
-   ```bash
-   ./start.sh
-   ```
+### Предварителни изисквания
 
-2. **Access your applications:**
-   - Frontend: http://localhost:8200
-   - Backend: http://localhost:8201
-   - API Status: http://localhost:8201/api/status
+- Docker & Docker Compose
+- Node.js 18+ (за frontend development)
+- PHP 8.1+ (за backend development)
 
-3. **Stop the environment:**
-   ```bash
-   ./stop.sh
-   ```
-
-## 🔧 Management Scripts
-
-- `./start.sh` - Start all services with auto-setup
-- `./stop.sh` - Stop all services
-- `./laravel-setup.sh` - Full Laravel initialization
-- `./db-manage.sh` - Database management utilities
-
-## 📁 Project Structure
-
-```
-vibecode-full-stack-starter-kit/
-├── frontend/             # Next.js application
-│   ├── src/             # Source code
-│   ├── public/          # Static assets
-│   ├── package.json     # Frontend dependencies
-│   └── next.config.js   # Next.js configuration
-├── backend/             # Laravel application
-│   ├── app/             # Application code
-│   ├── public/          # Web root
-│   ├── routes/          # API routes
-│   ├── database/        # Migrations, seeders
-│   ├── .env            # Laravel configuration
-│   └── composer.json    # Backend dependencies
-├── nginx/              # Nginx configuration
-├── docker/             # Docker configurations
-├── mysql/init/         # Database initialization
-├── tools/              # Development utilities
-├── docker-compose.yml  # Container orchestration
-└── README.md          # This documentation
-```
-
-## 🐳 Docker Services
-
-All services are isolated with unique names: `vibecode-full-stack-starter-kit_*`
-
-- **frontend** - Next.js development server
-- **backend** - Nginx reverse proxy
-- **php_fpm** - PHP-FPM for Laravel
-- **mysql** - MySQL 8.0 database
-- **redis** - Redis cache server
-- **tools** - Development utilities container
-
-## 💻 Development Commands
-
-### Frontend Development
-```bash
-# Access frontend container
-docker compose exec frontend sh
-
-# Install packages
-docker compose exec frontend npm install package-name
-
-# View frontend logs
-docker compose logs frontend -f
-```
-
-### Backend Development
-```bash
-# Access PHP container
-docker compose exec php_fpm sh
-
-# Laravel Artisan commands
-docker compose exec php_fpm php artisan --version
-docker compose exec php_fpm php artisan migrate
-docker compose exec php_fpm php artisan make:controller UserController
-docker compose exec php_fpm php artisan make:model Product -m
-
-# Composer commands
-docker compose exec php_fpm composer install
-docker compose exec php_fpm composer require laravel/sanctum
-
-# View backend logs
-docker compose logs backend -f
-docker compose logs php_fpm -f
-```
-
-### Database Operations
-```bash
-# Connect to MySQL
-./db-manage.sh connect
-
-# Create backup
-./db-manage.sh backup
-
-# Connect to Redis
-./db-manage.sh redis
-
-# Direct MySQL access
-docker compose exec mysql mysql -u root -pvibecode-full-stack-starter-kit_mysql_pass vibecode-full-stack-starter-kit_app
-```
-
-## 🔐 Database Configuration
-
-**MySQL Credentials:**
-- Host: mysql (internal) / localhost:8203 (external)
-- Database: vibecode-full-stack-starter-kit_app
-- Username: root
-- Password: vibecode-full-stack-starter-kit_mysql_pass
-
-**Redis Configuration:**
-- Host: redis (internal) / localhost:8204 (external)  
-- Password: vibecode-full-stack-starter-kit_redis_pass
-
-## 🛠️ Troubleshooting
-
-### Common Issues
-
-1. **Port conflicts:**
-   - Check if ports 8200-8205 are available
-   - Use `netstat -tulpn | grep :PORT` to check port usage
-
-2. **Permission issues:**
-   - Run `./laravel-setup.sh` to fix Laravel permissions
-
-3. **Services not starting:**
-   - Check Docker is running: `docker ps`
-   - View logs: `docker compose logs`
-
-### Useful Commands
+### 1. Клониране на проекта
 
 ```bash
-# Check service status
-docker compose ps
-
-# View all logs
-docker compose logs -f
-
-# Restart specific service
-docker compose restart frontend
-docker compose restart backend
-
-# Rebuild services
-docker compose up -d --build
-
-# Clean up (removes containers and volumes)
-docker compose down -v
+git clone <repository-url>
+cd full-stack-starter-kit
 ```
 
-## 📊 Monitoring
+### 2. Backend Setup (Laravel)
 
-- **Service Status**: `docker compose ps`
-- **Resource Usage**: `docker stats`
-- **Logs**: `docker compose logs -f [service_name]`
+```bash
+cd backend
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+```
 
-## 🔄 Updates
+### 3. Frontend Setup (Next.js)
 
-To update the environment:
-1. Pull latest images: `docker compose pull`
-2. Rebuild services: `docker compose up -d --build`
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## 🐳 Docker Setup
+
+### Стартиране с Docker
+
+```bash
+# Стартиране на всички услуги
+docker-compose up -d
+
+# Проверка на статуса
+docker-compose ps
+
+# Логове
+docker-compose logs -f
+```
+
+### Услуги
+
+- **Backend**: `http://localhost:8200`
+- **Frontend**: `http://localhost:3000`
+- **Database**: MySQL на порт 3306
+- **Redis**: Порт 6379
+
+### Полезни команди
+
+```bash
+# Влизане в PHP контейнера
+docker-compose exec php_fpm bash
+
+# Изпълняване на Laravel команди
+docker-compose exec php_fpm php artisan migrate
+docker-compose exec php_fpm php artisan db:seed
+
+# Рестартиране на услуги
+docker-compose restart
+```
+
+## 🤖 Добавяне на AI Tools
+
+### 1. Чрез Web Interface
+
+1. Влезте в системата като потребител
+2. Отидете на `/add-tool`
+3. Попълнете формата:
+   - **Име на тула**
+   - **Описание**
+   - **Линк**
+   - **Категория**
+   - **Рекомендувани роли**
+   - **Тагове**
+
+### 2. Чрез API
+
+```bash
+curl -X POST http://localhost:8200/api/ai-tools \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "ChatGPT",
+    "description": "AI-powered conversational assistant",
+    "link": "https://chat.openai.com",
+    "category_id": 1,
+    "recommended_roles": ["backend", "frontend"],
+    "tag_ids": [1, 2]
+  }'
+```
+
+### 3. Админ одобрение
+
+- Всички нови тулове изискват одобрение от админ
+- Админ може да одобри/отхвърли тулове в `/admin`
+
+## 💬 Коментари и рейтинги
+
+### Функционалности
+
+- **Коментари**: Потребителите могат да оставят коментари за AI tools
+- **Рейтинги**: 5-звездна система за оценяване на tools
+- **Модерация**: Всички коментари изискват одобрение от админ
+- **Статистики**: Среден рейтинг и брой оценки за всеки tool
+
+### Използване
+
+1. **Добавяне на коментар**:
+   - Отидете на `/tool/{id}`
+   - Напишете коментар (минимум 10 символа)
+   - Кликнете "Submit Comment"
+
+2. **Рейтинг на tool**:
+   - Отидете на `/tool/{id}`
+   - Кликнете върху звездите (1-5)
+   - Рейтингът се запазва автоматично
+
+3. **Админ модерация**:
+   - Отидете на `/admin/comments`
+   - Прегледайте всички коментари
+   - Одобрете или отхвърлете коментари
+
+## 👥 Ролева система
+
+### Роли и права
+
+| Роля | Права |
+|------|-------|
+| **Owner** | Пълен достъп, админ панел, управление на потребители |
+| **Admin** | Админ панел, одобряване на тулове, статистики |
+| **Backend** | Добавяне на тулове, преглед на backend-свързани тулове |
+| **Frontend** | Добавяне на тулове, преглед на frontend-свързани тулове |
+| **PM** | Добавяне на тулове, преглед на PM-свързани тулове |
+| **QA** | Добавяне на тулове, преглед на QA-свързани тулове |
+| **Designer** | Добавяне на тулове, преглед на design-свързани тулове |
+
+### Тестови акаунти
+
+```
+Email: owner@example.com
+Password: password
+
+Email: admin@example.com  
+Password: password
+
+Email: backend@example.com
+Password: password
+
+Email: frontend@example.com
+Password: password
+
+Email: pm@example.com
+Password: password
+
+Email: qa@example.com
+Password: password
+
+Email: designer@example.com
+Password: password
+```
+
+## 🛡️ Админ панел
+
+### Функционалности
+
+- **Dashboard**: Статистики и обзор на системата
+- **Tools Management**: Одобряване/отхвърляне на AI tools
+- **Comments Management**: Модерация на коментари
+- **Activity Logs**: Проследяване на потребителски действия
+- **User Management**: Управление на потребители
+- **Cache Management**: Очистване на кеш
+
+### Достъп
+
+1. **Влезте като админ**:
+   - `owner@example.com` / `password`
+   - `admin@example.com` / `password`
+
+2. **Навигирайте до админ панела**:
+   - Кликнете "Admin Panel" в навигацията
+   - Или отидете на `/admin`
+
+3. **Управлявайте системата**:
+   - **Tools**: `/admin/tools` - одобряване на tools
+   - **Comments**: `/admin/comments` - модерация на коментари
+   - **Activity**: `/admin/activity-logs` - проследяване на действия
+   - **Users**: `/admin/users` - управление на потребители
+
+## 🔐 2FA (Two-Factor Authentication)
+
+### Налични методи
+
+1. **Email** - Код се изпраща на email
+2. **Telegram** - Код се изпраща в Telegram
+3. **Google Authenticator** - QR код за сканиране
+
+### Настройка
+
+1. Отидете на `/profile`
+2. Кликнете "2FA Settings"
+3. Изберете метод и следвайте инструкциите
+
+## 📊 API Документация
+
+### Основни endpoints
+
+#### Аутентификация
+```
+POST /api/login
+POST /api/register
+POST /api/logout
+GET  /api/user
+```
+
+#### AI Tools
+```
+GET    /api/ai-tools
+POST   /api/ai-tools
+GET    /api/ai-tools/{id}
+PUT    /api/ai-tools/{id}
+DELETE /api/ai-tools/{id}
+```
+
+#### Категории
+```
+GET    /api/categories
+POST   /api/categories
+GET    /api/categories/{id}
+PUT    /api/categories/{id}
+DELETE /api/categories/{id}
+```
+
+#### Тагове
+```
+GET    /api/tags
+POST   /api/tags
+GET    /api/tags/{id}
+PUT    /api/tags/{id}
+DELETE /api/tags/{id}
+```
+
+#### 2FA
+```
+GET  /api/2fa/status
+POST /api/2fa/enable
+POST /api/2fa/disable
+POST /api/2fa/send-code
+POST /api/2fa/verify
+```
+
+#### Коментари и рейтинги
+```
+GET    /api/ai-tools/{id}/comments
+POST   /api/ai-tools/{id}/comments
+PUT    /api/ai-tools/{id}/comments/{comment}
+DELETE /api/ai-tools/{id}/comments/{comment}
+
+GET    /api/ai-tools/{id}/ratings
+POST   /api/ai-tools/{id}/ratings
+GET    /api/ai-tools/{id}/ratings/my
+DELETE /api/ai-tools/{id}/ratings
+```
+
+#### Админ
+```
+GET  /api/admin/dashboard
+GET  /api/admin/tools
+GET  /api/admin/comments
+POST /api/admin/tools/{id}/approve
+POST /api/admin/tools/{id}/reject
+POST /api/admin/comments/{id}/approve
+POST /api/admin/comments/{id}/reject
+GET  /api/admin/activity-logs
+GET  /api/admin/users
+```
+
+## 🚨 Troubleshooting
+
+### Често срещани проблеми
+
+#### 1. "Failed to load" грешки
+```bash
+# Проверете дали backend работи
+docker-compose logs php_fpm
+
+# Рестартирайте услугите
+docker-compose restart
+```
+
+#### 2. Database connection грешки
+```bash
+# Проверете MySQL
+docker-compose exec mysql mysql -u root -p
+
+# Рестартирайте базата данни
+docker-compose restart mysql
+```
+
+#### 3. Frontend не се зарежда
+```bash
+# Проверете Node.js
+cd frontend
+npm install
+npm run dev
+```
+
+#### 4. 2FA не работи
+```bash
+# Проверете email конфигурацията в .env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+```
+
+#### 5. Коментари не се показват
+```bash
+# Проверете дали коментарът е одобрен
+# Отидете на /admin/comments и одобрете коментара
+
+# Проверете базата данни
+docker-compose exec mysql mysql -u root -p
+SELECT * FROM tool_comments WHERE is_approved = 1;
+```
+
+#### 6. Админ панел не се зарежда
+```bash
+# Проверете дали сте влезли като owner или admin
+# Проверете middleware в backend/routes/api.php
+```
+
+### Логове
+
+```bash
+# Laravel логове
+docker-compose exec php_fpm tail -f /var/www/html/storage/logs/laravel.log
+
+# Nginx логове
+docker-compose logs nginx
+
+# MySQL логове
+docker-compose logs mysql
+```
+
+## 🔧 Development
+
+### Полезни команди
+
+```bash
+# Laravel
+php artisan migrate
+php artisan db:seed
+php artisan cache:clear
+php artisan config:clear
+
+# Frontend
+npm run dev
+npm run build
+npm run lint
+
+# Docker
+docker-compose up -d
+docker-compose down
+docker-compose logs -f
+```
+
+### Code Style
+
+- **Backend**: PSR-12 стандарт
+- **Frontend**: ESLint + Prettier
+- **Database**: Snake_case за таблици и колони
+- **API**: RESTful endpoints
+
+## 📈 Performance
+
+### Кеширане
+
+- **Redis** за сесии и кеш
+- **Laravel Cache** за често достъпвани данни
+- **Database indexes** за оптимизация
+
+### Мониторинг
+
+- **Laravel Telescope** за debugging
+- **Activity Logs** за audit trail
+- **Performance metrics** в админ панела
+- **Comments moderation** за качество на съдържанието
+- **Rating statistics** за популярност на tools
+
+## 🤝 Contributing
+
+1. Fork проекта
+2. Създайте feature branch
+3. Направете промените
+4. Добавете тестове
+5. Създайте Pull Request
+
+## 📄 License
+
+MIT License - вижте LICENSE файла за детайли.
 
 ---
 
-**Generated with create-fullstack-env.sh**  
-**Project ID**: vibecode-full-stack-starter-kit  
-**Created**: Thu Sep  4 01:37:12 PM EEST 2025
+**Създадено с ❤️ за ефективно управление на AI Tools**

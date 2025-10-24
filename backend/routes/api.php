@@ -9,6 +9,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ToolCommentController;
+use App\Http\Controllers\ToolRatingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +69,19 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/backup-codes', [TwoFactorController::class, 'generateBackupCodes']);
         });
 
+        // Comments and Ratings routes
+        Route::prefix('ai-tools/{aiTool}')->group(function () {
+            Route::get('/comments', [ToolCommentController::class, 'index']);
+            Route::post('/comments', [ToolCommentController::class, 'store']);
+            Route::put('/comments/{comment}', [ToolCommentController::class, 'update']);
+            Route::delete('/comments/{comment}', [ToolCommentController::class, 'destroy']);
+            
+            Route::get('/ratings', [ToolRatingController::class, 'index']);
+            Route::post('/ratings', [ToolRatingController::class, 'store']);
+            Route::get('/ratings/my', [ToolRatingController::class, 'show']);
+            Route::delete('/ratings', [ToolRatingController::class, 'destroy']);
+        });
+
         // Admin routes (admin middleware required)
         Route::middleware('admin')->prefix('admin')->group(function () {
             Route::get('/dashboard', [AdminController::class, 'dashboard']);
@@ -77,6 +92,11 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/users', [AdminController::class, 'users']);
             Route::get('/categories', [AdminController::class, 'categories']);
             Route::get('/tags', [AdminController::class, 'tags']);
+            Route::get('/comments', [AdminController::class, 'comments']);
             Route::post('/clear-cache', [AdminController::class, 'clearCache']);
+            
+            // Admin comment management
+            Route::post('/comments/{comment}/approve', [ToolCommentController::class, 'approve']);
+            Route::post('/comments/{comment}/reject', [ToolCommentController::class, 'reject']);
         });
     });

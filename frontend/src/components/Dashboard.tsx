@@ -35,15 +35,26 @@ export default function Dashboard() {
           totalTags: tagsData.length,
           featuredTools: toolsResponse.data.filter(tool => tool.is_featured).length,
         });
-      } catch (err) {
-        setError('Failed to load dashboard data');
+      } catch (err: any) {
+        console.error('Dashboard data fetch error:', err);
+        console.error('Error details:', {
+          message: err.message,
+          status: err.status,
+          response: err.response
+        });
+        setError(`Failed to load dashboard data: ${err.message || 'Unknown error'}`);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDashboardData();
-  }, []);
+    // Only fetch data if user is authenticated
+    if (user) {
+      fetchDashboardData();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const getRoleColor = (role: string) => {
     const colors = {

@@ -57,6 +57,17 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <button
+              onClick={() => window.location.href = '/'}
+              className="flex items-center text-gray-600 hover:text-gray-900 mr-4 transition-colors duration-200"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Main Dashboard
+            </button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
           <p className="text-gray-600 mt-2">Manage AI tools and monitor system activity</p>
         </div>
@@ -135,6 +146,15 @@ export default function AdminDashboard() {
                 Manage Tools
               </button>
               <button
+                onClick={() => window.location.href = '/admin/comments'}
+                className="w-full flex items-center justify-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Manage Comments
+              </button>
+              <button
                 onClick={() => window.location.href = '/admin/activity-logs'}
                 className="w-full flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
               >
@@ -151,15 +171,15 @@ export default function AdminDashboard() {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-gray-600">Categories:</span>
-                <span className="font-semibold">{stats.total_categories}</span>
+                <span className="font-semibold text-gray-900">{stats.total_categories}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Tags:</span>
-                <span className="font-semibold">{stats.total_tags}</span>
+                <span className="font-semibold text-gray-900">{stats.total_tags}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Users:</span>
-                <span className="font-semibold">{stats.total_users}</span>
+                <span className="font-semibold text-gray-900">{stats.total_users}</span>
               </div>
             </div>
           </div>

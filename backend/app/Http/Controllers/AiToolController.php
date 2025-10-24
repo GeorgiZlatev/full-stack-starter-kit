@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\AiTool;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +17,7 @@ class AiToolController extends Controller
      */
     public function index(Request $request)
     {
-        $query = AiTool::with(['category', 'tags', 'creator'])
+        $query = AiTool::with(['category', 'tags', 'creator', 'ratings'])
             ->where('is_active', true);
 
         // Filter by category
@@ -108,6 +109,19 @@ class AiToolController extends Controller
                 $tool->tags()->attach($request->tag_ids);
             }
 
+            // Log activity
+            ActivityLog::log(
+                Auth::id(),
+                'create',
+                'AiTool',
+                $tool->id,
+                null,
+                $tool->toArray(),
+                "Created new AI tool: {$tool->name}",
+                $request->ip(),
+                $request->userAgent()
+            );
+
             DB::commit();
 
             return response()->json([
@@ -132,7 +146,7 @@ class AiToolController extends Controller
         // Increment view count
         $aiTool->increment('views_count');
 
-        return response()->json($aiTool->load(['category', 'tags', 'creator']));
+        return response()->json($aiTool->load(['category', 'tags', 'creator', 'ratings', 'comments']));
     }
 
     /**
@@ -163,6 +177,8 @@ class AiToolController extends Controller
 
         DB::beginTransaction();
         try {
+            $oldValues = $aiTool->toArray();
+            
             $aiTool->update($request->only([
                 'name', 'description', 'link', 'category_id',
                 'how_to_use', 'real_examples', 'documentation_link',
@@ -186,6 +202,19 @@ class AiToolController extends Controller
             if ($request->has('tag_ids')) {
                 $aiTool->tags()->sync($request->tag_ids);
             }
+
+            // Log activity
+            ActivityLog::log(
+                Auth::id(),
+                'update',
+                'AiTool',
+                $aiTool->id,
+                $oldValues,
+                $aiTool->fresh()->toArray(),
+                "Updated AI tool: {$aiTool->name}",
+                $request->ip(),
+                $request->userAgent()
+            );
 
             DB::commit();
 
@@ -212,6 +241,22 @@ class AiToolController extends Controller
         if ($aiTool->created_by !== Auth::id() && !Auth::user()->hasRole('owner')) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
+
+        $oldValues = $aiTool->toArray();
+        $toolName = $aiTool->name;
+        
+        // Log activity before deletion
+        ActivityLog::log(
+            Auth::id(),
+            'delete',
+            'AiTool',
+            $aiTool->id,
+            $oldValues,
+            null,
+            "Deleted AI tool: {$toolName}",
+            request()->ip(),
+            request()->userAgent()
+        );
 
         $aiTool->delete();
 

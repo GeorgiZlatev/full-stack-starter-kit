@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Models\ToolComment;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
@@ -241,6 +242,18 @@ class AdminController extends Controller
     }
 
     /**
+     * Get all comments for admin review
+     */
+    public function comments(): JsonResponse
+    {
+        $comments = ToolComment::with(['user', 'aiTool'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($comments);
+    }
+
+    /**
      * Clear cache
      */
     public function clearCache(): JsonResponse
@@ -248,7 +261,7 @@ class AdminController extends Controller
         Cache::forget('admin_dashboard_stats');
         Cache::forget('admin_categories');
         Cache::forget('admin_tags');
-
+        
         return response()->json(['message' => 'Cache cleared successfully']);
     }
 }

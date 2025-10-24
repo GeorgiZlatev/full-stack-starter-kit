@@ -78,4 +78,36 @@ class AiTool extends Model
     {
         return $this->roles()->pluck('role')->toArray();
     }
+
+    /**
+     * Get the tool's comments
+     */
+    public function comments()
+    {
+        return $this->hasMany(ToolComment::class, 'ai_tool_id');
+    }
+
+    /**
+     * Get the tool's ratings
+     */
+    public function ratings()
+    {
+        return $this->hasMany(ToolRating::class, 'ai_tool_id');
+    }
+
+    /**
+     * Get the average rating
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        return $this->ratings()->avg('rating') ?? 0;
+    }
+
+    /**
+     * Get the total ratings count
+     */
+    public function getRatingsCountAttribute(): int
+    {
+        return $this->ratings()->count();
+    }
 }

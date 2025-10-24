@@ -94,14 +94,14 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
 
   return (
     <SimpleLayout title="Add New AI Tool" showBackButton onBackClick={onCancel}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         <div className="bg-white shadow-sm rounded-lg border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900">Add New AI Tool</h2>
-            <p className="text-gray-600 mt-1">Share a new AI tool with the community</p>
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Add New AI Tool</h2>
+            <p className="text-gray-600 mt-1 text-sm sm:text-base">Share a new AI tool with the community</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-8">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-6 sm:space-y-8">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                 <div className="flex">
@@ -116,7 +116,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
             {/* Basic Information */}
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Basic Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Tool Name *
@@ -126,7 +126,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                     required
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white text-sm sm:text-base"
                     placeholder="e.g., ChatGPT, GitHub Copilot"
                   />
                 </div>
@@ -139,7 +139,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                     required
                     value={formData.category_id}
                     onChange={(e) => handleInputChange('category_id', parseInt(e.target.value))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white text-sm sm:text-base"
                   >
                     <option value={0}>Select a category</option>
                     {categories.map(category => (
@@ -183,7 +183,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
             {/* Optional Fields */}
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Additional Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Documentation Link
@@ -192,7 +192,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                     type="url"
                     value={formData.documentation_link || ''}
                     onChange={(e) => handleInputChange('documentation_link', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white text-sm sm:text-base"
                     placeholder="https://docs.example.com"
                   />
                 </div>
@@ -205,7 +205,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                     rows={3}
                     value={formData.how_to_use || ''}
                     onChange={(e) => handleInputChange('how_to_use', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 bg-white text-sm sm:text-base"
                     placeholder="Brief instructions on how to use this tool..."
                   />
                 </div>
@@ -232,16 +232,16 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Recommended Roles
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {availableRoles.map(role => (
-                    <label key={role.value} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label key={role.value} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer bg-white">
                       <input
                         type="checkbox"
                         checked={formData.recommended_roles?.includes(role.value) || false}
                         onChange={() => handleRoleToggle(role.value)}
                         className="mr-3 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm font-medium">{role.label}</span>
+                      <span className="text-sm font-medium text-gray-900">{role.label}</span>
                     </label>
                   ))}
                 </div>
@@ -272,7 +272,7 @@ export default function AddAiToolForm({ onSuccess, onCancel }: AddAiToolFormProp
             </div>
 
             {/* Form Actions */}
-            <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-4 sm:pt-6 border-t border-gray-200">
               {onCancel && (
                 <button
                   type="button"

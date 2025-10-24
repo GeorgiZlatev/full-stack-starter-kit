@@ -139,6 +139,17 @@ export default function AdminToolsList() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <button
+              onClick={() => window.location.href = '/admin'}
+              className="flex items-center text-gray-600 hover:text-gray-900 mr-4 transition-colors duration-200"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Admin Dashboard
+            </button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900">Admin Tools Management</h1>
           <p className="text-gray-600 mt-2">Review and manage AI tool submissions</p>
         </div>
@@ -152,7 +163,7 @@ export default function AdminToolsList() {
               <select
                 value={filters.status}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
               >
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>
@@ -166,7 +177,7 @@ export default function AdminToolsList() {
               <select
                 value={filters.category_id}
                 onChange={(e) => setFilters({ ...filters, category_id: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
               >
                 <option value="">All Categories</option>
                 {categories.map(category => (
@@ -182,7 +193,7 @@ export default function AdminToolsList() {
               <select
                 value={filters.role}
                 onChange={(e) => setFilters({ ...filters, role: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
               >
                 <option value="">All Roles</option>
                 <option value="owner">Owner</option>
@@ -199,7 +210,7 @@ export default function AdminToolsList() {
               <select
                 value={filters.created_by}
                 onChange={(e) => setFilters({ ...filters, created_by: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
               >
                 <option value="">All Creators</option>
                 {users.map(user => (
@@ -217,7 +228,7 @@ export default function AdminToolsList() {
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                 placeholder="Search tools..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
               />
             </div>
           </div>

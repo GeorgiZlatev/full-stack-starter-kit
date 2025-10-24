@@ -1,4 +1,26 @@
-const API_BASE_URL = (typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_API_URL : undefined) || 'http://localhost:8201/api';
+// Get API URL from environment or use default
+const getApiBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    // In browser, try environment variable first
+    const envUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (envUrl) {
+      return envUrl;
+    }
+    // Fallback to default
+    return 'http://localhost:8201/api';
+  }
+  // Server-side fallback
+  return 'http://localhost:8201/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// Debug: Log API_BASE_URL in development
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  console.log('API_BASE_URL:', API_BASE_URL);
+  console.log('NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+  console.log('Window location:', window.location.href);
+}
 
 export interface User {
   id: number;
@@ -364,6 +386,61 @@ class ApiClient {
   async clearAdminCache(): Promise<any> {
     const response = await this.request('/admin/clear-cache', {
       method: 'POST',
+    });
+    return response;
+  }
+
+  // Comments API
+  async getToolComments(toolId: number): Promise<any> {
+    const response = await this.request(`/ai-tools/${toolId}/comments`);
+    return response;
+  }
+
+  async createToolComment(toolId: number, content: string): Promise<any> {
+    const response = await this.request(`/ai-tools/${toolId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    });
+    return response;
+  }
+
+  async updateToolComment(toolId: number, commentId: number, content: string): Promise<any> {
+    const response = await this.request(`/ai-tools/${toolId}/comments/${commentId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ content }),
+    });
+    return response;
+  }
+
+  async deleteToolComment(toolId: number, commentId: number): Promise<any> {
+    const response = await this.request(`/ai-tools/${toolId}/comments/${commentId}`, {
+      method: 'DELETE',
+    });
+    return response;
+  }
+
+  // Ratings API
+  async getToolRatings(toolId: number): Promise<any> {
+    const response = await this.request(`/ai-tools/${toolId}/ratings`);
+    return response;
+  }
+
+  async getMyToolRating(toolId: number): Promise<any> {
+    const response = await this.request(`/ai-tools/${toolId}/ratings/my`);
+    return response;
+  }
+
+  async rateTool(toolId: number, rating: number): Promise<any> {
+    const response = await this.request(`/ai-tools/${toolId}/ratings`, {
+      method: 'POST',
+      body: JSON.stringify({ rating }),
+    });
+    return response;
+  }
+
+  async removeToolRating(toolId: number): Promise<any> {
+    const response = await this.request(`/ai-tools/${toolId}/ratings`, {
+      method: 'DELETE',
     });
     return response;
   }

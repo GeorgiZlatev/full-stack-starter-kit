@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiClient, AiTool, Category, Tag } from '@/lib/api';
-// import SimpleLayout from './SimpleLayout';
+import SimpleLayout from './SimpleLayout';
 
 interface AiToolsListProps {
   onAddTool?: () => void;
@@ -14,6 +14,7 @@ export default function AiToolsList({ onAddTool }: AiToolsListProps) {
   const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   
   // Filters
   const [search, setSearch] = useState('');
@@ -22,54 +23,49 @@ export default function AiToolsList({ onAddTool }: AiToolsListProps) {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [showFeatured, setShowFeatured] = useState(false);
 
-  const availableRoles = [
-    { value: 'owner', label: 'Owner' },
-    { value: 'backend', label: 'Backend Developer' },
-    { value: 'frontend', label: 'Frontend Developer' },
-    { value: 'pm', label: 'Project Manager' },
-    { value: 'qa', label: 'QA Tester' },
-    { value: 'designer', label: 'UI/UX Designer' },
-  ];
-
+  // Debounced search effect
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [categoriesData, tagsData] = await Promise.all([
-          apiClient.getCategories(),
-          apiClient.getTags(),
-        ]);
-        setCategories(categoriesData);
-        setTags(tagsData);
-      } catch (err) {
-        setError('Failed to load categories and tags');
-      }
-    };
+    if (search.trim()) {
+      setIsSearching(true);
+    }
+    
+    const timeoutId = setTimeout(() => {
+      fetchData();
+      setIsSearching(false);
+    }, 300); // 300ms delay for search
 
+    return () => clearTimeout(timeoutId);
+  }, [search]);
+
+  // Immediate effect for other filters
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedCategory, selectedTag, selectedRole, showFeatured]);
 
-  useEffect(() => {
-    const fetchTools = async () => {
+  const fetchData = async () => {
+    try {
       setLoading(true);
-      try {
-        const params: any = {};
-        if (search) params.search = search;
-        if (selectedCategory) params.category_id = selectedCategory;
-        if (selectedTag) params.tag_id = selectedTag;
-        if (selectedRole) params.role = selectedRole;
-        if (showFeatured) params.featured = true;
+      const [toolsResponse, categoriesData, tagsData] = await Promise.all([
+        apiClient.getAiTools({
+          search: search || undefined,
+          category_id: selectedCategory || undefined,
+          tag_id: selectedTag || undefined,
+          role: selectedRole || undefined,
+          featured: showFeatured || undefined,
+        }),
+        apiClient.getCategories(),
+        apiClient.getTags(),
+      ]);
 
-        const response = await apiClient.getAiTools(params);
-        setTools(response.data);
-      } catch (err) {
-        setError('Failed to load AI tools');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTools();
-  }, [search, selectedCategory, selectedTag, selectedRole, showFeatured]);
+      setTools(toolsResponse.data);
+      setCategories(categoriesData);
+      setTags(tagsData);
+    } catch (err) {
+      setError('Failed to load AI tools');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const clearFilters = () => {
     setSearch('');
@@ -82,6 +78,7 @@ export default function AiToolsList({ onAddTool }: AiToolsListProps) {
   const getRoleColor = (role: string) => {
     const colors = {
       owner: 'bg-red-100 text-red-800',
+      admin: 'bg-purple-100 text-purple-800',
       backend: 'bg-blue-100 text-blue-800',
       frontend: 'bg-green-100 text-green-800',
       pm: 'bg-yellow-100 text-yellow-800',
@@ -94,6 +91,7 @@ export default function AiToolsList({ onAddTool }: AiToolsListProps) {
   const getRoleLabel = (role: string) => {
     const labels = {
       owner: 'Owner',
+      admin: 'Admin',
       backend: 'Backend',
       frontend: 'Frontend',
       pm: 'PM',
@@ -112,15 +110,23 @@ export default function AiToolsList({ onAddTool }: AiToolsListProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <SimpleLayout title="AI Tools">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-          <div className="mb-4 sm:mb-0">
-            <h1 className="text-3xl font-bold text-gray-900">AI Tools</h1>
-            <p className="text-gray-600 mt-2">Discover and share AI tools for your projects</p>
-          </div>
-          {onAddTool && (
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => window.location.href = '/'}
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Dashboard
+          </button>
+        </div>
+        {/* Add Tool Button */}
+        {onAddTool && (
+          <div className="mb-8 flex justify-end">
             <button
               onClick={onAddTool}
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm"
@@ -130,101 +136,98 @@ export default function AiToolsList({ onAddTool }: AiToolsListProps) {
               </svg>
               Add New Tool
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Filters */}
-        <div className="bg-white shadow-sm rounded-lg border border-gray-200 p-6 mb-8">
+        <div className="bg-white shadow-sm rounded-lg border border-gray-200 p-4 sm:p-6 mb-8">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search tools..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search tools..."
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                />
+                {isSearching && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  </div>
+                )}
+              </div>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-            <select
-              value={selectedCategory || ''}
-              onChange={(e) => setSelectedCategory(e.target.value ? parseInt(e.target.value) : null)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Categories</option>
-              {categories.map(category => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <select
+                value={selectedCategory || ''}
+                onChange={(e) => setSelectedCategory(e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+              >
+                <option value="">All Categories</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tag</label>
-            <select
-              value={selectedTag || ''}
-              onChange={(e) => setSelectedTag(e.target.value ? parseInt(e.target.value) : null)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Tags</option>
-              {tags.map(tag => (
-                <option key={tag.id} value={tag.id}>
-                  {tag.name}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tag</label>
+              <select
+                value={selectedTag || ''}
+                onChange={(e) => setSelectedTag(e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+              >
+                <option value="">All Tags</option>
+                {tags.map(tag => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-            <select
-              value={selectedRole || ''}
-              onChange={(e) => setSelectedRole(e.target.value || null)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Roles</option>
-              {availableRoles.map(role => (
-                <option key={role.value} value={role.value}>
-                  {role.label}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <select
+                value={selectedRole || ''}
+                onChange={(e) => setSelectedRole(e.target.value || null)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+              >
+                <option value="">All Roles</option>
+                <option value="backend">Backend</option>
+                <option value="frontend">Frontend</option>
+                <option value="pm">PM</option>
+                <option value="qa">QA</option>
+                <option value="designer">Designer</option>
+              </select>
+            </div>
 
-          <div className="flex items-end">
-            <button
-              onClick={clearFilters}
-              className="w-full px-3 py-2 text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200"
-            >
-              Clear Filters
-            </button>
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-5 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={showFeatured}
+                  onChange={(e) => setShowFeatured(e.target.checked)}
+                  className="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-700">Show featured tools only</span>
+              </label>
+              <button
+                onClick={clearFilters}
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium self-start sm:self-auto"
+              >
+                Clear all filters
+              </button>
+            </div>
           </div>
         </div>
-
-          <div className="lg:col-span-5 flex items-center justify-between">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={showFeatured}
-                onChange={(e) => setShowFeatured(e.target.checked)}
-                className="mr-2 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-700">Show featured tools only</span>
-            </label>
-            <button
-              onClick={clearFilters}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-            >
-              Clear all filters
-            </button>
-          </div>
-        </div>
-      </div>
 
         {/* Tools Grid */}
         {error ? (
@@ -242,10 +245,10 @@ export default function AiToolsList({ onAddTool }: AiToolsListProps) {
             <p className="text-gray-400 mt-2">Try adjusting your filters or add a new tool</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {tools.map(tool => (
               <div key={tool.id} className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">{tool.name}</h3>
@@ -300,25 +303,63 @@ export default function AiToolsList({ onAddTool }: AiToolsListProps) {
                     )}
                   </div>
 
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                    <a
-                      href={tool.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"
-                    >
-                      Visit Tool
-                      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
+                  {/* Rating Display */}
+                  <div className="mb-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex items-center">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span
+                            key={star}
+                            className={`text-sm ${
+                              star <= (tool.average_rating || 0)
+                                ? 'text-yellow-400'
+                                : 'text-gray-300'
+                            }`}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        {tool.average_rating ? tool.average_rating.toFixed(1) : 'No rating'} 
+                        ({tool.ratings_count || 0})
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pt-4 border-t border-gray-100 space-y-2 sm:space-y-0">
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => window.location.href = `/tool/${tool.id}`}
+                        className="inline-flex items-center text-blue-600 hover:text-blue-800 text-xs sm:text-sm font-medium"
+                      >
+                        <span className="hidden sm:inline">View Details</span>
+                        <span className="sm:hidden">Details</span>
+                        <svg className="w-3 h-3 sm:w-4 sm:h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                      
+                      <a
+                        href={tool.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-green-600 hover:text-green-800 text-xs sm:text-sm font-medium"
+                      >
+                        <span className="hidden sm:inline">Visit Tool</span>
+                        <span className="sm:hidden">Visit</span>
+                        <svg className="w-3 h-3 sm:w-4 sm:h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    </div>
                     
                     {tool.documentation_link && (
                       <a
                         href={tool.documentation_link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-500 hover:text-gray-700 text-sm"
+                        className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm self-start sm:self-auto"
                       >
                         📚 Docs
                       </a>

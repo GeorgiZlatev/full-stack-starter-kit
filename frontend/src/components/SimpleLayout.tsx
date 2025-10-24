@@ -55,8 +55,9 @@ export default function SimpleLayout({ children, title, showBackButton, onBackCl
       {/* Top bar */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center py-4 lg:py-0 lg:h-16">
+            {/* Left side - Logo and title */}
+            <div className="flex items-center mb-4 lg:mb-0">
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
                   <span className="text-white font-bold text-sm">AI</span>
@@ -67,21 +68,23 @@ export default function SimpleLayout({ children, title, showBackButton, onBackCl
               {showBackButton && (
                 <button
                   onClick={onBackClick}
-                  className="flex items-center text-gray-600 hover:text-gray-900 ml-6"
+                  className="flex items-center text-gray-600 hover:text-gray-900 ml-4 lg:ml-6"
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  Back
+                  <span className="hidden sm:inline">Back</span>
                 </button>
               )}
               
               {title && (
-                <h1 className="text-xl font-semibold text-gray-900 ml-6">{title}</h1>
+                <h1 className="text-lg lg:text-xl font-semibold text-gray-900 ml-4 lg:ml-6">{title}</h1>
               )}
             </div>
 
-            <div className="flex items-center space-x-4">
+            {/* Right side - User info and navigation */}
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              {/* User info */}
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                   <span className="text-gray-600 font-medium text-sm">
@@ -94,33 +97,34 @@ export default function SimpleLayout({ children, title, showBackButton, onBackCl
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2">
+              {/* Navigation buttons */}
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => window.location.href = '/tools'}
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-1 lg:px-3 lg:py-2 rounded-md text-xs lg:text-sm font-medium transition-colors duration-200"
                 >
-                  🤖 Tools
+                  <span className="hidden sm:inline">🤖 </span>Tools
                 </button>
                 <button
                   onClick={() => window.location.href = '/add-tool'}
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-1 lg:px-3 lg:py-2 rounded-md text-xs lg:text-sm font-medium transition-colors duration-200"
                 >
-                  ➕ Add Tool
+                  <span className="hidden sm:inline">➕ </span>Add Tool
                 </button>
                 <button
                   onClick={() => window.location.href = '/profile'}
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-1 lg:px-3 lg:py-2 rounded-md text-xs lg:text-sm font-medium transition-colors duration-200"
                 >
-                  👤 Profile
+                  <span className="hidden sm:inline">👤 </span>Profile
                 </button>
                 
                 {/* Admin Panel Button - Only for owner and admin roles */}
                 {(user?.role === 'owner' || user?.role === 'admin') && (
                   <button
                     onClick={() => window.location.href = '/admin'}
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                    className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 lg:px-3 lg:py-2 rounded-md text-xs lg:text-sm font-medium transition-colors duration-200"
                   >
-                    🛡️ Admin Panel
+                    <span className="hidden sm:inline">🛡️ </span>Admin
                   </button>
                 )}
                 
@@ -129,9 +133,9 @@ export default function SimpleLayout({ children, title, showBackButton, onBackCl
                     await logout();
                     window.location.href = '/';
                   }}
-                  className="text-red-600 hover:text-red-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-red-600 hover:text-red-900 px-2 py-1 lg:px-3 lg:py-2 rounded-md text-xs lg:text-sm font-medium transition-colors duration-200"
                 >
-                  🚪 Logout
+                  <span className="hidden sm:inline">🚪 </span>Logout
                 </button>
               </div>
             </div>
