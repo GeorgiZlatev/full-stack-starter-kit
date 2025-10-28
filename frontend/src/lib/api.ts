@@ -154,6 +154,11 @@ class ApiClient {
     });
 
     if (!response.ok) {
+      // Handle redirects (3xx status codes)
+      if (response.status >= 300 && response.status < 400) {
+        throw new Error(`Unexpected redirect (${response.status}). Please check your API configuration.`);
+      }
+      
       const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }

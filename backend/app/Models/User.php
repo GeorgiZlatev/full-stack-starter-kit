@@ -88,4 +88,12 @@ class User extends Authenticatable
     {
         return ['owner', 'backend', 'frontend', 'pm', 'qa', 'designer'];
     }
+
+    /**
+     * Get the user's AI tools
+     */
+    public function aiTools(): HasMany
+    {
+        return $this->hasMany(AiTool::class, 'created_by');
+    }
 }
